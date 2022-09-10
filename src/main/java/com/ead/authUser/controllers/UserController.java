@@ -51,7 +51,11 @@ public class UserController {
 		}
 		
 		for (UserModel userModel : pageUserModel.toList()) {
-			userModel.add(linkTo(methodOn(UserController.class).getOneUser(userModel.getUserId())).withSelfRel());
+			userModel.add(linkTo(methodOn(UserController.class).getOneUser(userModel.getUserId())).withRel("GET - User"));
+			userModel.add(linkTo(methodOn(UserController.class).updateUser(userModel.getUserId(), null)).withRel("PUT - User"));
+			userModel.add(linkTo(methodOn(UserController.class).deleteUser(userModel.getUserId())).withRel("DELETE - User"));
+			userModel.add(linkTo(methodOn(AuthenticationController.class).registerUser(null)).withRel("POST - User"));
+
 		}
 		
 		return ResponseEntity.status(HttpStatus.OK).body(pageUserModel);
@@ -65,6 +69,11 @@ public class UserController {
 		if (userModel.isEmpty()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
 		}
+		
+		userModel.get().add(linkTo(methodOn(UserController.class).updateUser(userModel.get().getUserId(), null)).withRel("PUT - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).deleteUser(userModel.get().getUserId())).withRel("DELETE - User"));
+		userModel.get().add(linkTo(methodOn(AuthenticationController.class).registerUser(null)).withRel("POST - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).getAllUser(null, null)).withRel("GET - AllUsers"));
 		
 		return ResponseEntity.status(HttpStatus.OK).body(userModel);
 	}
@@ -88,6 +97,11 @@ public class UserController {
 		
 		userService.save(userModel.get());
 		
+		userModel.get().add(linkTo(methodOn(UserController.class).getOneUser(userModel.get().getUserId())).withRel("GET - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).deleteUser(userModel.get().getUserId())).withRel("DELETE - User"));
+		userModel.get().add(linkTo(methodOn(AuthenticationController.class).registerUser(null)).withRel("POST - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).getAllUser(null, null)).withRel("GET - AllUsers"));
+		
 		return ResponseEntity.status(HttpStatus.OK).body(userModel);
 	}
 	
@@ -102,6 +116,11 @@ public class UserController {
 		
 		userService.delet(userModel.get());
 		
-		return ResponseEntity.status(HttpStatus.OK).body("User deleted with sucess");
+		userModel.get().add(linkTo(methodOn(UserController.class).getOneUser(userModel.get().getUserId())).withRel("GET - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).updateUser(userModel.get().getUserId(), null)).withRel("PUT - User"));
+		userModel.get().add(linkTo(methodOn(AuthenticationController.class).registerUser(null)).withRel("POST - User"));
+		userModel.get().add(linkTo(methodOn(UserController.class).getAllUser(null, null)).withRel("GET - AllUsers"));
+		
+		return ResponseEntity.status(HttpStatus.OK).body(userModel.get());
 	}
 }

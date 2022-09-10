@@ -1,5 +1,8 @@
 package com.ead.authUser.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
@@ -22,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @RestController
 @RequestMapping("auth")
-public final class AuthenticationController {
+public class AuthenticationController {
 
 	@Autowired
 	UserService userService;
@@ -52,6 +55,11 @@ public final class AuthenticationController {
 		
 		userService.save(userModel);
 		
+		userModel.add(linkTo(methodOn(UserController.class).getOneUser(userModel.getUserId())).withRel("GET - User"));
+		userModel.add(linkTo(methodOn(UserController.class).updateUser(userModel.getUserId(), null)).withRel("PUT - User"));
+		userModel.add(linkTo(methodOn(UserController.class).deleteUser(userModel.getUserId())).withRel("DELETE - User"));
+		userModel.add(linkTo(methodOn(UserController.class).getAllUser(null, null)).withRel("GET - AllUser"));
+
 		return ResponseEntity.status(HttpStatus.CREATED).body(userModel);
 	}
 }
